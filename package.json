@@ -1,0 +1,22 @@
+{
+  "name": "outagefence",
+  "version": "0.1.0-rc.1",
+  "description": "Test data boundaries when dependencies fail. Local fault matrices, synthetic markers, and explicit coverage gaps.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "author": "Slanta Cause",
+  "repository": { "type": "git", "url": "git+https://github.com/jn6825rsr7-afk/outagefence.git" },
+  "homepage": "https://outagefence-slanta-cause.slanta-cause.chatgpt.site",
+  "bugs": { "url": "https://github.com/jn6825rsr7-afk/outagefence/issues" },
+  "engines": { "node": ">=22.0.0" },
+  "bin": { "outagefence": "./bin/outagefence.mjs" },
+  "exports": { ".": "./src/index.mjs" },
+  "files": ["bin", "src", "examples", "docs", "README.md", "LICENSE", "CHANGELOG.md", "SECURITY.md"],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "demo": "node bin/outagefence.mjs demo --out artifacts/demo",
+    "check": "node --check bin/outagefence.mjs && node --test test/*.test.mjs"
+  },
+  "keywords": ["privacy-testing", "fault-injection", "fallback", "ci", "developer-tools"]
+}

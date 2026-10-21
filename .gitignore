@@ -1,0 +1,11 @@
+/artifacts/
+/market/
+/node_modules/
+*.tgz
+*.zip
+.DS_Store
+outagefence-demo-*/
+outagefence-results-*/
+outagefence-example/
+.env
+.env.*

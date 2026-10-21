@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "name": "Account summary: data boundaries under failure",
+  "command": ["$NODE", "application.mjs"],
+  "inputs": ["application.mjs"],
+  "env": { "MODE": "fixed" },
+  "timeoutMs": 5000,
+  "services": {
+    "primary": { "env": "PRIMARY_URL", "response": { "json": { "summary": "Primary synthetic summary" } }, "maxCalls": 1 },
+    "backup": { "env": "BACKUP_URL", "response": { "json": { "summary": "Backup synthetic summary" } }, "maxCalls": 1 },
+    "telemetry": { "env": "TELEMETRY_URL", "response": { "json": { "accepted": true } }, "maxCalls": 1 }
+  },
+  "markers": {
+    "customer": { "allowedServices": ["primary"], "requiredIn": ["primary"] }
+  },
+  "scenarios": [
+    { "id": "baseline", "faults": {}, "maxCalls": { "backup": 0, "telemetry": 0 } },
+    { "id": "primary-rate-limited", "faults": { "primary": { "type": "http", "status": 429 } }, "requiredServices": ["backup", "telemetry"] },
+    { "id": "primary-unavailable", "faults": { "primary": { "type": "http", "status": 503 } }, "requiredServices": ["backup", "telemetry"] },
+    { "id": "primary-disconnected", "faults": { "primary": { "type": "drop" } }, "requiredServices": ["backup", "telemetry"] },
+    { "id": "primary-too-slow", "faults": { "primary": { "type": "delay", "delayMs": 800 } }, "requiredServices": ["backup", "telemetry"] },
+    { "id": "primary-malformed", "faults": { "primary": { "type": "malformed" } }, "requiredServices": ["backup", "telemetry"] }
+  ]
+}
