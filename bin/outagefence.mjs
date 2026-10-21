@@ -5,7 +5,7 @@ import { runMatrix } from '../src/runner.mjs';
 import { writeReports } from '../src/report.mjs';
 import { runDemo, initialize } from '../src/demo.mjs';
 
-const HELP = `OutageFence 0.1.0-rc.1 by Slanta Cause — test data boundaries when dependencies fail
+const HELP = `OutageFence 0.1.0-rc.2 by Slanta Cause — test data boundaries when dependencies fail
 
 Usage:
   outagefence demo [--out DIRECTORY] [--json]
@@ -49,7 +49,7 @@ process.once('SIGTERM', abort);
 try {
   const args = parse(process.argv.slice(2));
   if (args.help) console.log(HELP);
-  else if (args.version) console.log('0.1.0-rc.1');
+  else if (args.version) console.log('0.1.0-rc.2');
   else if (args.mode === 'init') {
     const target = resolve(args.directory ?? 'outagefence-example');
     await initialize(target);

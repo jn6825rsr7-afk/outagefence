@@ -151,7 +151,7 @@ export async function runMatrix(input, options = {}) {
   const summary = summarize(scenarios);
   const interrupted = scenarios.length < config.scenarios.length;
   if (interrupted && summary.status === 'PASS') summary.status = 'ERROR';
-  return { schemaVersion: 1, tool: 'OutageFence', author: 'Slanta Cause', toolVersion: '0.1.0-rc.1',
+  return { schemaVersion: 1, tool: 'OutageFence', author: 'Slanta Cause', toolVersion: '0.1.0-rc.2',
     observedAt: new Date().toISOString(), name: config.name,
     evidence: 'local-synthetic-http',
     provenance: { configSha256: hash(JSON.stringify(config)), commandSha256: hash(JSON.stringify(config.command)),

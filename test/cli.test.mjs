@@ -22,7 +22,7 @@ test('help and version run without config or side effects', async () => {
     const help = await invoke(['--help'], { cwd: directory });
     assert.equal(help.code, 0); assert.match(help.stdout, /Usage:/);
     const version = await invoke(['--version'], { cwd: directory });
-    assert.equal(version.code, 0); assert.match(version.stdout, /^0\.1\.0-rc\.1/);
+    assert.equal(version.code, 0); assert.match(version.stdout, /^0\.1\.0-rc\.2/);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 

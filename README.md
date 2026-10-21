@@ -10,7 +10,7 @@ OutageFence is a local command-line tool for testing application data boundaries
 
 A fallback may return a perfectly good answer while copying private input into an unapproved backup or error collector. OutageFence tests that boundary explicitly.
 
-**Status:** 0.1.0-rc.1, free early-access release. Tested locally on macOS with Node.js 22. No customer deployment, provider trial, or commercial demand has been validated. See [the evidence limits](docs/BOUNDARIES.md).
+**Status:** 0.1.0-rc.2, free early-access release. Tested locally on macOS with Node.js 22. No customer deployment, provider trial, or commercial demand has been validated. See [the evidence limits](docs/BOUNDARIES.md).
 
 ## Run the complete demonstration
 
@@ -35,7 +35,7 @@ Open `artifacts/my-demo/index.html`. The broken example passes its normal baseli
 Download the `.tgz` file from [GitHub Releases](https://github.com/jn6825rsr7-afk/outagefence/releases), then install the local archive:
 
 ```sh
-npm install --global --ignore-scripts ./outagefence-0.1.0-rc.1.tgz
+npm install --global --ignore-scripts ./outagefence-0.1.0-rc.2.tgz
 outagefence demo
 ```
 

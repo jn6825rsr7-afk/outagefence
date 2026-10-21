@@ -1,6 +1,6 @@
 {
   "name": "outagefence",
-  "version": "0.1.0-rc.1",
+  "version": "0.1.0-rc.2",
   "description": "Test data boundaries when dependencies fail. Local fault matrices, synthetic markers, and explicit coverage gaps.",
   "type": "module",
   "private": true,
