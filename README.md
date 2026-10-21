@@ -2,7 +2,7 @@
 
 **By Slanta Cause · Free early-access release**
 
-[Website and captured example reports](https://outagefence-slanta-cause.slanta-cause.chatgpt.site) · [Free downloads](https://github.com/jn6825rsr7-afk/outagefence/releases) · [Report a bug](https://github.com/jn6825rsr7-afk/outagefence/issues) · [Contribute](CONTRIBUTING.md)
+[Website and captured example reports](https://jn6825rsr7-afk.github.io/outagefence/) · [Free downloads](https://github.com/jn6825rsr7-afk/outagefence/releases) · [Report a bug](https://github.com/jn6825rsr7-afk/outagefence/issues) · [Contribute](CONTRIBUTING.md)
 
 **Test where sensitive data goes when your dependencies fail.**
 

@@ -7,7 +7,7 @@
   "license": "MIT",
   "author": "Slanta Cause",
   "repository": { "type": "git", "url": "git+https://github.com/jn6825rsr7-afk/outagefence.git" },
-  "homepage": "https://outagefence-slanta-cause.slanta-cause.chatgpt.site",
+  "homepage": "https://jn6825rsr7-afk.github.io/outagefence/",
   "bugs": { "url": "https://github.com/jn6825rsr7-afk/outagefence/issues" },
   "engines": { "node": ">=22.0.0" },
   "bin": { "outagefence": "./bin/outagefence.mjs" },
