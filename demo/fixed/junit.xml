@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="The same fallback with its data boundary preserved" tests="6" failures="0" errors="0" skipped="0">
+<testcase classname="OutageFence" name="baseline" time="0.080"></testcase>
+<testcase classname="OutageFence" name="primary-rate-limited" time="0.119"></testcase>
+<testcase classname="OutageFence" name="primary-unavailable" time="0.111"></testcase>
+<testcase classname="OutageFence" name="primary-disconnected" time="0.092"></testcase>
+<testcase classname="OutageFence" name="primary-too-slow" time="0.248"></testcase>
+<testcase classname="OutageFence" name="primary-malformed" time="0.134"></testcase>
+</testsuite>

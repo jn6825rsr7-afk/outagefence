@@ -1,0 +1,252 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OutageFence by Slanta Cause — documentation</title><link rel="stylesheet" href="styles.css"><style>main{padding-top:45px;padding-bottom:60px;max-width:980px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:white;border:1px solid #d7dfd3;border-radius:7px;padding:24px;color:#173b3b}section{margin:35px 0}h1{font-size:43px}h2{font-size:26px}</style></head><body><header class="nav wrap"><a class="wordmark" href="./">◫ OutageFence<small>by Slanta Cause</small></a><a href="./#download">Free downloads</a></header><main class="wrap"><p class="kicker">VERSION 0.1.0-rc.2 · MIT LICENSE</p><h1>Documentation</h1><p>The source files below are displayed as text so every configuration detail and evidence limit stays available offline.</p><section><h2>Quick start</h2><pre># OutageFence
+
+**By Slanta Cause · Free early-access release**
+
+[Website and captured example reports](https://jn6825rsr7-afk.github.io/outagefence/) · [Free downloads](https://github.com/jn6825rsr7-afk/outagefence/releases) · [Report a bug](https://github.com/jn6825rsr7-afk/outagefence/issues) · [Contribute](CONTRIBUTING.md)
+
+**Test where sensitive data goes when your dependencies fail.**
+
+OutageFence is a local command-line tool for testing application data boundaries under HTTP failures. It starts temporary endpoints for your services, gives your test synthetic marker values, runs a declared failure matrix, and checks which destinations receive those values.
+
+A fallback may return a perfectly good answer while copying private input into an unapproved backup or error collector. OutageFence tests that boundary explicitly.
+
+**Status:** 0.1.0-rc.2, free early-access release. Tested locally on macOS with Node.js 22. No customer deployment, provider trial, or commercial demand has been validated. See [the evidence limits](docs/BOUNDARIES.md).
+
+## Run the complete demonstration
+
+Requires Node.js 22 or later. There are no package dependencies or install scripts.
+
+Clone and run from source:
+
+```sh
+git clone https://github.com/jn6825rsr7-afk/outagefence.git
+cd outagefence
+node bin/outagefence.mjs demo --out artifacts/my-demo
+```
+
+Or, if you already have the source directory:
+
+```sh
+node bin/outagefence.mjs demo --out artifacts/my-demo
+```
+
+Open `artifacts/my-demo/index.html`. The broken example passes its normal baseline and leaks its synthetic customer value in five failure scenarios. The corrected example satisfies all six declared contracts. Both versions finish their application task successfully.
+
+Download the `.tgz` file from [GitHub Releases](https://github.com/jn6825rsr7-afk/outagefence/releases), then install the local archive:
+
+```sh
+npm install --global --ignore-scripts ./outagefence-0.1.0-rc.2.tgz
+outagefence demo
+```
+
+The package is not currently on npm. Do not substitute `npx outagefence` for the local archive command.
+
+## Use it with your own application
+
+```sh
+outagefence init my-boundary-test
+outagefence run --config my-boundary-test/outagefence.json --out my-results
+```
+
+Replace `command` with a foreground test or application command, supplied as an argument array. Relative command paths resolve from the configuration file&#x27;s directory. `$NODE` selects the Node executable currently running OutageFence.
+
+1. Point your application&#x27;s service clients at the environment variables declared in `services`. OutageFence sets them to temporary loopback endpoints.
+2. Feed `OUTAGEFENCE_MARKER_CUSTOMER` into the tested input in place of a sensitive customer value. Add other named markers for other data classes.
+3. Declare where each marker is allowed, and where it **must** be observed as a positive control. Include a baseline and the failures you want to exercise.
+4. Make your command assert the intended user-facing result and exit nonzero if that fails. OutageFence independently checks the declared routing and request-count contract.
+
+The generated `examples/outagefence.json` is a complete runnable reference. [Configuration reference](docs/CONFIGURATION.md) · [CI integration](docs/CI.md) · [Architecture and reuse decisions](docs/ARCHITECTURE.md).
+
+## What you get
+
+- Deterministic HTTP error, connection-drop, delay, and malformed-JSON scenarios, including faults after a specified number of calls.
+- Per-marker allowed destinations, required positive controls, required service calls, and call-count budgets.
+- Separate `PASS`, `FAIL`, `INCONCLUSIVE`, and `ERROR` states. Missing input or an unused fault never becomes a pass.
+- A self-contained HTML report with a failure matrix, filters, and request details. It works offline and at narrow screen widths.
+- JSON for automation, Markdown for review, and JUnit XML for CI. Inconclusive coverage fails the JUnit check.
+- Optional fingerprints for declared source files. Changes during a matrix make otherwise passing results inconclusive.
+- No raw request bodies, headers, URL paths, marker values, or child output in the reports. There is no telemetry.
+
+## Result and exit codes
+
+| State | Meaning | Exit |
+|---|---|---:|
+| PASS | Declared local contract was exercised and satisfied | 0 |
+| FAIL | Forbidden marker destination or request budget violation observed | 1 |
+| ERROR | Command failed, could not start, timed out, or execution failed | 2 |
+| INCONCLUSIVE | Required evidence or complete capture is missing | 3 |
+| Interrupted | User interrupted the run | 130 |
+
+Violations take precedence over other states, but every finding remains in the report. `demo` returns 0 when the expected broken-versus-fixed contrast is observed.
+
+## Boundaries that matter
+
+OutageFence observes **only the configured local HTTP endpoints**. It does not discover hardcoded external destinations, block network egress, inspect databases or files, or sandbox the child command. Use synthetic data and a disposable test environment; use network isolation separately when required.
+
+Matching covers exact synthetic tokens and documented standalone encodings. It is not general PII detection or taint tracking. Compressed request bodies produce an explicit coverage gap. A pass does not establish production privacy, regulatory compliance, or provider behavior.
+
+The configured command is executable code. Review a configuration before running it. Most parent environment variables, including ordinary API-key variables, are not inherited by default. The child still has the normal filesystem and OS permissions of the user running it.
+
+## Development
+
+```sh
+npm test
+npm run demo
+npm pack --ignore-scripts
+```
+
+No dependency installation is required. The automated suite exercises actual loopback HTTP, both application variants, CLI behavior, error states, capture limits, report escaping, source changes, and installation-shaped use.
+
+## Distribution
+
+Free and open source under the MIT license, copyright 2026 Slanta Cause. See `LICENSE`. The npm manifest retains `private: true` to prevent accidental registry publication; local archive installation works normally.
+
+People run OutageFence on their own computer. It has no paid API integration, hosted inference, account system, subscription, or usage billing. GitHub releases provide the downloadable files. The separate demonstration website is a static presentation and does not run users&#x27; application tests.
+</pre></section><section><h2>Configuration reference</h2><pre># Configuration reference
+
+The version 1 JSON format is validated before the child command starts. Unknown keys, unknown services, invalid fault fields, colliding endpoint variables, and missing positive controls are rejected. The executable validator in `src/config.mjs` is authoritative.
+
+| Top-level field | Meaning | Default |
+|---|---|---|
+| `version` | Must be `1` | Required |
+| `name` | Human-readable report name | Required |
+| `command` | Executable and arguments, without shell interpolation | Required |
+| `services` | Named HTTP destinations and endpoint environment variables | Required |
+| `markers` | Synthetic data classes and destination contracts | Required |
+| `scenarios` | Ordered matrix, including a no-fault baseline | Required |
+| `env` | Explicit string environment values for the child | `{}` |
+| `inheritEnv` | Explicit parent environment names to inherit | `[]` |
+| `inputs` | Relative regular files to fingerprint before and after the matrix | `[]` |
+| `timeoutMs` | Per-command deadline, 100–300000 ms | `10000` |
+| `settleMs` | Observation grace after command completion, 0–5000 ms | `100` |
+| `maxBodyBytes` | Per-request capture cap, 1 KiB–16 MiB | `1048576` |
+| `maxRequests` | Per-scenario record cap, 1–10000 | `1000` |
+
+At most 16 services, 16 marker classes, and 64 scenarios are accepted. Service and marker names begin with a lowercase letter and contain lowercase letters, numbers, underscores, or hyphens. Marker names that collapse into the same environment variable are rejected.
+
+## Services
+
+```json
+{
+  &quot;primary&quot;: {
+    &quot;env&quot;: &quot;PRIMARY_URL&quot;,
+    &quot;maxCalls&quot;: 3,
+    &quot;response&quot;: {
+      &quot;status&quot;: 200,
+      &quot;json&quot;: { &quot;summary&quot;: &quot;Synthetic result&quot; },
+      &quot;headers&quot;: { &quot;x-test-fixture&quot;: &quot;yes&quot; }
+    }
+  }
+}
+```
+
+Every service gets its own ephemeral `http://127.0.0.1:PORT` endpoint. All paths at that endpoint share the response and contract. Supply `response.text` instead of `response.json` for text. The response defaults to HTTP 200 and `{&quot;ok&quot;:true}`; `maxCalls` defaults to 10. This is a small HTTP fixture surface, not a provider protocol emulator. Responses for an SDK must match what that SDK expects.
+
+Methods, timestamps, body byte counts, matched marker labels, action, status, and body SHA-256 are retained. Headers, URL paths, query strings and body bytes are inspected in memory and discarded. An oversized or incomplete request cannot support an absence-of-leak claim.
+
+## Markers
+
+```json
+{
+  &quot;customer&quot;: {
+    &quot;allowedServices&quot;: [&quot;primary&quot;],
+    &quot;requiredIn&quot;: [&quot;primary&quot;]
+  }
+}
+```
+
+Each scenario generates fresh cryptographically random synthetic tokens. The example above exposes its value in `OUTAGEFENCE_MARKER_CUSTOMER`. A marker named `case-note` is exposed as `OUTAGEFENCE_MARKER_CASE_NOTE`.
+
+Put the token into the actual tested input. Sending it directly to a positive-control endpoint from a separate helper would weaken the test: the positive control should represent the real application path.
+
+Every marker must have at least one positive-control destination in `requiredIn`, and each required destination must also be allowed. This design prevents a vacuous no-input pass. `requiredIn` applies independently in **every scenario**. If a scenario intentionally avoids reading or sending that data entirely, give that behavior a separate configuration with a different appropriate positive control.
+
+Supported detection: plaintext token, base64 or base64url of the standalone token, lowercase hex of the standalone token, and lowercase hexadecimal JSON Unicode escaping of every character. Arbitrary transformed values, hashes, encryption, compressed payloads, chunked semantic fragments, and base64 of a larger enclosing document are not covered. HTTP transfer chunking is reassembled normally; splitting the token across semantic fields is not.
+
+## Scenarios
+
+```json
+{
+  &quot;id&quot;: &quot;primary-rate-limited&quot;,
+  &quot;faults&quot;: { &quot;primary&quot;: { &quot;type&quot;: &quot;http&quot;, &quot;status&quot;: 429, &quot;afterCalls&quot;: 0 } },
+  &quot;requiredServices&quot;: [&quot;backup&quot;],
+  &quot;maxCalls&quot;: { &quot;primary&quot;: 2, &quot;backup&quot;: 1 }
+}
+```
+
+| Fault type | Extra fields | Behavior |
+|---|---|---|
+| `http` | `status`: 400–599 | Respond with the status, generic JSON error and Retry-After 0 |
+| `drop` | None | Close the connection after receiving the request body |
+| `delay` | `delayMs`: 1–300000 | Wait before sending the normal response |
+| `malformed` | None | Respond 200 with invalid JSON |
+
+Every fault optionally accepts `afterCalls` (default 0). The first N requests are normal; all later requests receive the fault. Requests are numbered when received. A fault that never reaches its trigger makes the scenario inconclusive.
+
+`requiredServices` requires at least one request to those services. `maxCalls` overrides the service-level request budget for this scenario. Use a zero-call budget to forbid all traffic to a destination, including traffic without markers. Baselines use an empty or omitted `faults` object. Multiple simultaneous failures are supported when explicitly declared; they are not automatically expanded into a combinatorial matrix.
+
+## Process behavior
+
+The child runs in the configuration directory with no interactive stdin and no shell. It must stay in the foreground and return only after its work completes. On macOS/Linux its process group is terminated after exit or deadline to clean up surviving test children. Children that deliberately detach into a new session are outside this cleanup guarantee. Windows process-tree cleanup has not been validated.
+
+Basic runtime variables (PATH, HOME or USERPROFILE, system and temporary-directory variables, LANG and LC_ALL) are retained. `CI=true`, synthetic markers, scenario ID, and local endpoint variables are then injected. Other variables require `inheritEnv` or `env`. Endpoint collisions and loader variables such as NODE_OPTIONS, NODE_PATH and LD_PRELOAD are rejected in custom environment configuration. HOME access still permits a process to read user files; this is not a credential or filesystem sandbox.
+
+Child output is drained but never saved or displayed. Use your own test runner directly while debugging failures. OutageFence records byte counts and exit status without assuming it can safely redact arbitrary application logs.
+
+Declared input fingerprints cover only named files, not transitive imports, dependencies, runtime state or the full environment. No signature or remote attestation is generated.
+</pre></section><section><h2>Evidence boundaries</h2><pre># Evidence boundaries and threat model
+
+OutageFence answers: **under these synthetic inputs and injected HTTP failures, did a declared local endpoint receive a marker it was not allowed to receive?**
+
+It also checks that positive controls, required calls, requested faults, capture completeness and command execution support the result.
+
+It is intended for developers testing their own code in a disposable environment. It is not designed to safely execute a malicious repository or prevent a hostile application from evading observation. Any local process able to reach the ephemeral ports can also send requests; run the harness on a trusted or isolated test host.
+
+## What PASS means
+
+The command exited zero. All configured positive controls and required services were observed. Every declared fault was injected. No configured call budget was exceeded. No supported representation of a marker was observed at a forbidden configured endpoint. No capture gap or declared source change was detected.
+
+This result concerns a specific configuration, input set, application invocation and local endpoint set. It is not a statement about every input, every failure, all data flows, real providers, or production.
+
+## Coverage gaps
+
+- Unconfigured or hardcoded network destinations are invisible. A green result cannot establish that no other network request occurred.
+- No inspection of databases, filesystem writes, terminal output, shared memory, provider retention or remote logs.
+- No interception of TLS traffic, DNS, HTTP/2, WebSockets or non-HTTP protocols. Clients must use the injected local HTTP URLs.
+- No partial SSE-stream fault simulation or token-by-token truncation. Use a mature provider mock when protocol fidelity is the question.
+- Marker matching is exact and synthetic. Transformed, encrypted, hashed, fragmented or arbitrarily encoded values may evade detection. Declared compressed bodies are explicitly inconclusive.
+- An application can mishandle data while omitting the synthetic marker. Required positive controls reduce vacuous tests but do not prove that every data field follows the same path.
+- Only faults and code paths present in the declared matrix are exercised. No exhaustive failure enumeration.
+- The test command owns functional assertions. Exit zero without a functional assertion does not establish that a summary, payment, workflow or user journey was correct.
+
+## Report privacy
+
+Captured request content exists temporarily in process memory. Reports contain labels, method, timing, size, action, body digest and matched marker names. Values, paths, headers and child output are discarded. Body hashes are metadata and can still reveal equality or permit guessing of low-entropy inputs. Configuration names, declared filenames and service labels are also metadata. Use synthetic data, including synthetic response fixtures; inspect reports before sharing them.
+
+Report files are written with mode 0600 on POSIX. Temporary local endpoints bind only to 127.0.0.1. There are no outgoing requests or analytics in the runner itself. The child command retains ordinary user permissions and may make its own outgoing requests. Third-party SDK telemetry is outside this tool&#x27;s control.
+
+## Interpreting failure
+
+A violation is a concrete observation at a configured endpoint. It is not a conclusion that a production breach occurred. An inconclusive result states a missing or incomplete observation. An execution error records a failed test invocation. All three require different remediation, and all remain non-green in automation.
+
+No legal or compliance certification is provided.
+</pre></section><section><h2>CI integration</h2><pre># CI integration
+
+Install the reviewed archive or use the reviewed source checkout. The package has no dependencies, so the CI command can invoke the source directly:
+
+```sh
+node path/to/outagefence/bin/outagefence.mjs run \
+  --config test/privacy/outagefence.json \
+  --out test-results/outagefence
+```
+
+Your CI must preserve the exit code. PASS is 0; violation is 1; usage or execution error is 2; incomplete coverage is 3. Upload the four generated report files as test artifacts even when the command fails. If your CI reads JUnit, import `test-results/outagefence/junit.xml`; inconclusive scenarios are failures, never skipped tests.
+
+Run in a disposable environment with synthetic application input and test-only response fixtures. Bind all clients you want observed to the injected endpoints. If you need a guarantee that nothing else can be contacted, independently restrict network egress at the CI/container/OS layer. OutageFence&#x27;s local listeners are not that restriction.
+
+The child command should launch any needed test application, exercise its behavior and terminate its own work before returning. macOS/Linux cleanup terminates the ordinary process group, including surviving foreground test children; do not intentionally daemonize test processes. Stateful external test services should be reset by the application&#x27;s own setup.
+
+Use declared `inputs` for important source files and commit the configuration alongside the application. Store the tested revision in your CI artifact metadata. The configuration and declared input hashes in the report provide a local reference; they are not signed CI attestations.
+
+Use the public source checkout or the downloadable archive from [GitHub Releases](https://github.com/jn6825rsr7-afk/outagefence/releases). The package is not on the npm registry, so a bare `npx outagefence` is not an installation route.
+</pre></section><p><a href="./">Return to OutageFence →</a></p></main></body></html>

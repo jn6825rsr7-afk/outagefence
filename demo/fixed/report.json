@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 1,
+  "tool": "OutageFence",
+  "author": "Slanta Cause",
+  "toolVersion": "0.1.0-rc.1",
+  "observedAt": "2026-10-21T16:27:41.195Z",
+  "name": "The same fallback with its data boundary preserved",
+  "evidence": "local-synthetic-http",
+  "provenance": {
+    "configSha256": "33a46b6348657a966f965459605bdc58606d6347f3934afb93326021a4f67d3b",
+    "commandSha256": "495cf52eaa5e3d750af716400fc26bc01d590b2e745d86e3ac4c1a84b2f14a57",
+    "executable": "$NODE",
+    "nodeVersion": "v22.23.3",
+    "platform": "darwin",
+    "inputsBefore": [
+      {
+        "path": "application.mjs",
+        "sha256": "c92e0c05744f7e8972ffce242e11f26d8ee922f3b4e85630d274acca66d139e2"
+      }
+    ],
+    "inputsAfter": [
+      {
+        "path": "application.mjs",
+        "sha256": "c92e0c05744f7e8972ffce242e11f26d8ee922f3b4e85630d274acca66d139e2"
+      }
+    ],
+    "inputsChanged": false
+  },
+  "boundaries": [
+    "Only requests received by declared local endpoints are observed.",
+    "Synthetic marker matching is not general data-flow tracking.",
+    "The child command is not network-isolated or sandboxed.",
+    "A passing scenario establishes only its declared local contract."
+  ],
+  "expectedScenarios": 6,
+  "interrupted": false,
+  "summary": {
+    "status": "PASS",
+    "counts": {
+      "PASS": 6,
+      "FAIL": 0,
+      "ERROR": 0,
+      "INCONCLUSIVE": 0
+    },
+    "total": 6
+  },
+  "scenarios": [
+    {
+      "id": "baseline",
+      "baseline": true,
+      "status": "PASS",
+      "faults": {},
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 80,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "backup": {
+          "calls": 0,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 0,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 75,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "45c31032ef71457066f53dd117a194e45072c3a44787503ce84817a83b45888a",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-rate-limited",
+      "baseline": false,
+      "status": "PASS",
+      "faults": {
+        "primary": {
+          "type": "http",
+          "status": 429,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 119,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 85,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "http",
+          "bodySha256": "35139be8bfbdeef8b0f0615e3bb0dc1d40a78eccd6ed9fe53e38d437ac64a273",
+          "status": 429
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 89,
+          "bytes": 26,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "1455649f1ed65d840beb57cea78ce3d4cc14b7017faead7ce9b20064456f3ebb",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 91,
+          "bytes": 51,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "553208a0ea2ba354301afaa13ca5918eb410d1a90b6634e0f692776076075b19",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-unavailable",
+      "baseline": false,
+      "status": "PASS",
+      "faults": {
+        "primary": {
+          "type": "http",
+          "status": 503,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 111,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 79,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "http",
+          "bodySha256": "98c7932a3fa26f139adf68d6d32b9aafc453b5f97fb4b43e333f9493eb631b94",
+          "status": 503
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 82,
+          "bytes": 26,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "1455649f1ed65d840beb57cea78ce3d4cc14b7017faead7ce9b20064456f3ebb",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 84,
+          "bytes": 51,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "553208a0ea2ba354301afaa13ca5918eb410d1a90b6634e0f692776076075b19",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-disconnected",
+      "baseline": false,
+      "status": "PASS",
+      "faults": {
+        "primary": {
+          "type": "drop",
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 92,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 83,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "drop",
+          "bodySha256": "fa447eb5feea9e461b704032680ef8e6fc94e3a8a51859ad0b6f7cdd870bf792"
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 87,
+          "bytes": 26,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "1455649f1ed65d840beb57cea78ce3d4cc14b7017faead7ce9b20064456f3ebb",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 90,
+          "bytes": 51,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "553208a0ea2ba354301afaa13ca5918eb410d1a90b6634e0f692776076075b19",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-too-slow",
+      "baseline": false,
+      "status": "PASS",
+      "faults": {
+        "primary": {
+          "type": "delay",
+          "delayMs": 800,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 248,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 82,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "delay",
+          "bodySha256": "cf21e64f0d4ad563bd20af7be6e8efd9ee154efbb175628c22f4b4ed4953b84b",
+          "delayMs": 800
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 240,
+          "bytes": 26,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "1455649f1ed65d840beb57cea78ce3d4cc14b7017faead7ce9b20064456f3ebb",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 245,
+          "bytes": 51,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "553208a0ea2ba354301afaa13ca5918eb410d1a90b6634e0f692776076075b19",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-malformed",
+      "baseline": false,
+      "status": "PASS",
+      "faults": {
+        "primary": {
+          "type": "malformed",
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 134,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 99,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "malformed",
+          "bodySha256": "4045646275cff6f535968802fc545a8038550199873c49772e150b43a2bb1ac8",
+          "status": 200
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 103,
+          "bytes": 26,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "1455649f1ed65d840beb57cea78ce3d4cc14b7017faead7ce9b20064456f3ebb",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 105,
+          "bytes": 51,
+          "markerHits": [],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "553208a0ea2ba354301afaa13ca5918eb410d1a90b6634e0f692776076075b19",
+          "status": 200
+        }
+      ],
+      "findings": []
+    }
+  ]
+}

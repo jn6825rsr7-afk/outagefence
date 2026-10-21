@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="A successful fallback that leaks data" tests="6" failures="5" errors="0" skipped="0">
+<testcase classname="OutageFence" name="baseline" time="0.076"></testcase>
+<testcase classname="OutageFence" name="primary-rate-limited" time="0.114"><failure type="contract" message="FAIL">Synthetic customer data reached telemetry (request 2).
+Synthetic customer data reached backup (request 3).</failure></testcase>
+<testcase classname="OutageFence" name="primary-unavailable" time="0.114"><failure type="contract" message="FAIL">Synthetic customer data reached telemetry (request 2).
+Synthetic customer data reached backup (request 3).</failure></testcase>
+<testcase classname="OutageFence" name="primary-disconnected" time="0.094"><failure type="contract" message="FAIL">Synthetic customer data reached telemetry (request 2).
+Synthetic customer data reached backup (request 3).</failure></testcase>
+<testcase classname="OutageFence" name="primary-too-slow" time="0.249"><failure type="contract" message="FAIL">Synthetic customer data reached telemetry (request 2).
+Synthetic customer data reached backup (request 3).</failure></testcase>
+<testcase classname="OutageFence" name="primary-malformed" time="0.126"><failure type="contract" message="FAIL">Synthetic customer data reached telemetry (request 2).
+Synthetic customer data reached backup (request 3).</failure></testcase>
+</testsuite>

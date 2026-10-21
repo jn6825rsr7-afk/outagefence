@@ -1,0 +1,24 @@
+{
+  "demonstrated": true,
+  "broken": {
+    "status": "FAIL",
+    "counts": {
+      "PASS": 1,
+      "FAIL": 5,
+      "ERROR": 0,
+      "INCONCLUSIVE": 0
+    },
+    "total": 6
+  },
+  "fixed": {
+    "status": "PASS",
+    "counts": {
+      "PASS": 6,
+      "FAIL": 0,
+      "ERROR": 0,
+      "INCONCLUSIVE": 0
+    },
+    "total": 6
+  },
+  "evidence": "Bundled fictional application, local synthetic HTTP; not a customer or provider trial."
+}

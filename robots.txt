@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jn6825rsr7-afk.github.io/outagefence/sitemap.xml

@@ -1,0 +1,573 @@
+{
+  "schemaVersion": 1,
+  "tool": "OutageFence",
+  "author": "Slanta Cause",
+  "toolVersion": "0.1.0-rc.1",
+  "observedAt": "2026-10-21T16:27:39.797Z",
+  "name": "A successful fallback that leaks data",
+  "evidence": "local-synthetic-http",
+  "provenance": {
+    "configSha256": "15f6c9c27fa6487688da4f830461321b1850dfb358914805595d310dfde79708",
+    "commandSha256": "495cf52eaa5e3d750af716400fc26bc01d590b2e745d86e3ac4c1a84b2f14a57",
+    "executable": "$NODE",
+    "nodeVersion": "v22.23.3",
+    "platform": "darwin",
+    "inputsBefore": [
+      {
+        "path": "application.mjs",
+        "sha256": "c92e0c05744f7e8972ffce242e11f26d8ee922f3b4e85630d274acca66d139e2"
+      }
+    ],
+    "inputsAfter": [
+      {
+        "path": "application.mjs",
+        "sha256": "c92e0c05744f7e8972ffce242e11f26d8ee922f3b4e85630d274acca66d139e2"
+      }
+    ],
+    "inputsChanged": false
+  },
+  "boundaries": [
+    "Only requests received by declared local endpoints are observed.",
+    "Synthetic marker matching is not general data-flow tracking.",
+    "The child command is not network-isolated or sandboxed.",
+    "A passing scenario establishes only its declared local contract."
+  ],
+  "expectedScenarios": 6,
+  "interrupted": false,
+  "summary": {
+    "status": "FAIL",
+    "counts": {
+      "PASS": 1,
+      "FAIL": 5,
+      "ERROR": 0,
+      "INCONCLUSIVE": 0
+    },
+    "total": 6
+  },
+  "scenarios": [
+    {
+      "id": "baseline",
+      "baseline": true,
+      "status": "PASS",
+      "faults": {},
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 76,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "backup": {
+          "calls": 0,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 0,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 74,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "fe7e867c3abbe71b1ee9a76e509dc298c0c7c9b015794b2f507b04e70f1686ea",
+          "status": 200
+        }
+      ],
+      "findings": []
+    },
+    {
+      "id": "primary-rate-limited",
+      "baseline": false,
+      "status": "FAIL",
+      "faults": {
+        "primary": {
+          "type": "http",
+          "status": 429,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 114,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 81,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "http",
+          "bodySha256": "5969c3a341530ecbc12c57ad2e3f8c29e51227495eac007456a0100b42e0e386",
+          "status": 429
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 85,
+          "bytes": 140,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "0c547438cefe78d9cd8201450c18db027fe997faac2753e5ed535abb7a6e4076",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 87,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "5969c3a341530ecbc12c57ad2e3f8c29e51227495eac007456a0100b42e0e386",
+          "status": 200
+        }
+      ],
+      "findings": [
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "telemetry",
+          "marker": "customer",
+          "request": 2
+        },
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "backup",
+          "marker": "customer",
+          "request": 3
+        }
+      ]
+    },
+    {
+      "id": "primary-unavailable",
+      "baseline": false,
+      "status": "FAIL",
+      "faults": {
+        "primary": {
+          "type": "http",
+          "status": 503,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 114,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 83,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "http",
+          "bodySha256": "8355c8969869d482b8dd8bce7e2790567ba0bd3f9223c45af861fe8c58e52184",
+          "status": 503
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 86,
+          "bytes": 140,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "08851c4cde851039ec115c3a2fc2d7320abc4c4c80ae7e2edf2158244437dc30",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 88,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "8355c8969869d482b8dd8bce7e2790567ba0bd3f9223c45af861fe8c58e52184",
+          "status": 200
+        }
+      ],
+      "findings": [
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "telemetry",
+          "marker": "customer",
+          "request": 2
+        },
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "backup",
+          "marker": "customer",
+          "request": 3
+        }
+      ]
+    },
+    {
+      "id": "primary-disconnected",
+      "baseline": false,
+      "status": "FAIL",
+      "faults": {
+        "primary": {
+          "type": "drop",
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 94,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 85,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "drop",
+          "bodySha256": "8440ac1d2302fed99c1246bfc302abcfee28501c24a15493e9a7d7489a8cd855"
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 89,
+          "bytes": 140,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "2aed2c98045290f8b582f56e73a7865281b1ac2cfbd6719ea881e5256cfc532f",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 92,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "8440ac1d2302fed99c1246bfc302abcfee28501c24a15493e9a7d7489a8cd855",
+          "status": 200
+        }
+      ],
+      "findings": [
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "telemetry",
+          "marker": "customer",
+          "request": 2
+        },
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "backup",
+          "marker": "customer",
+          "request": 3
+        }
+      ]
+    },
+    {
+      "id": "primary-too-slow",
+      "baseline": false,
+      "status": "FAIL",
+      "faults": {
+        "primary": {
+          "type": "delay",
+          "delayMs": 800,
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 249,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 82,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "delay",
+          "bodySha256": "d58f463935cb1cacf5e43c3a820f1cd2038ed9aac29dbf8d4695db09a23d165b",
+          "delayMs": 800
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 240,
+          "bytes": 140,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "3a1fed0706f09ae114966ff12b662a84fffdb1be4607f4a8a698ee3098fa9178",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 245,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "d58f463935cb1cacf5e43c3a820f1cd2038ed9aac29dbf8d4695db09a23d165b",
+          "status": 200
+        }
+      ],
+      "findings": [
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "telemetry",
+          "marker": "customer",
+          "request": 2
+        },
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "backup",
+          "marker": "customer",
+          "request": 3
+        }
+      ]
+    },
+    {
+      "id": "primary-malformed",
+      "baseline": false,
+      "status": "FAIL",
+      "faults": {
+        "primary": {
+          "type": "malformed",
+          "afterCalls": 0
+        }
+      },
+      "command": {
+        "exitCode": 0,
+        "signal": null,
+        "timedOut": false,
+        "aborted": false,
+        "spawnFailed": false,
+        "durationMs": 126,
+        "stdoutBytes": 25,
+        "stderrBytes": 0
+      },
+      "coverage": {
+        "primary": {
+          "calls": 1,
+          "faultsInjected": 1
+        },
+        "backup": {
+          "calls": 1,
+          "faultsInjected": 0
+        },
+        "telemetry": {
+          "calls": 1,
+          "faultsInjected": 0
+        }
+      },
+      "requests": [
+        {
+          "index": 1,
+          "service": "primary",
+          "method": "POST",
+          "atMs": 92,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "malformed",
+          "bodySha256": "f3690dd2164448397b33b7cf0c35d53940e4703227c4eb72af3c8f57cfbfbf04",
+          "status": 200
+        },
+        {
+          "index": 2,
+          "service": "telemetry",
+          "method": "POST",
+          "atMs": 96,
+          "bytes": 140,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "665ef6a5b614ea46e618338a4ded8283d7f6312b095287841a8aa54f45447932",
+          "status": 200
+        },
+        {
+          "index": 3,
+          "service": "backup",
+          "method": "POST",
+          "atMs": 97,
+          "bytes": 112,
+          "markerHits": [
+            "customer"
+          ],
+          "capture": "complete",
+          "action": "response",
+          "bodySha256": "f3690dd2164448397b33b7cf0c35d53940e4703227c4eb72af3c8f57cfbfbf04",
+          "status": 200
+        }
+      ],
+      "findings": [
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "telemetry",
+          "marker": "customer",
+          "request": 2
+        },
+        {
+          "kind": "violation",
+          "code": "forbidden-marker",
+          "service": "backup",
+          "marker": "customer",
+          "request": 3
+        }
+      ]
+    }
+  ]
+}
